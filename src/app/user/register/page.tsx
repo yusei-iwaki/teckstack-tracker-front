@@ -1,89 +1,101 @@
 "use client";
-import { useState } from "react";
 
-export default function Page() {
+import { useState } from "react";
+import { API_ROUTES } from "@/constants/api-route";
+import Link from "next/link";
+
+export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    setMessage(null);
-    setError(null);
+    setMessage("");
+    setError("");
 
     try {
-      const res = await fetch("http://localhost:8080/auth/register", {
+      const res = await fetch(API_ROUTES.USERS.CREATE, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (!res.ok) {
-        throw new Error("登録に失敗しました");
-      }
+      if (!res.ok) throw new Error("登録に失敗しました");
 
       setMessage("登録成功！");
       setEmail("");
       setPassword("");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (e: any) {
+      setError(e.message);
     }
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="w-full max-w-md">
-        <h1 className="text-4xl font-bold mb-8">TechStack Tracker</h1>
-
-        {/* フォーム */}
-        <form
-          onSubmit={handleSubmit}
-          className="p-6 border rounded-xl bg-gray-50 text-black space-y-4"
-        >
-          <h2 className="text-xl font-bold">ユーザー登録</h2>
-
-          <div>
-            <label className="block mb-1">Email</label>
-            <input
-              type="email"
-              className="w-full border p-2 rounded"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1">Password</label>
-            <input
-              type="password"
-              className="w-full border p-2 rounded"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded"
-          >
-            登録
-          </button>
-
-          {/* メッセージ */}
-          {message && <p className="text-green-600">{message}</p>}
-          {error && <p className="text-red-500">{error}</p>}
-        </form>
+    <div className="space-y-6">
+      {/* タイトル */}
+      <div>
+        <h2 className="text-2xl font-bold">アカウント作成</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          メールアドレスとパスワードを入力してください
+        </p>
       </div>
-    </main>
+
+      {/* フォーム */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Email */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium">メールアドレス</label>
+          <input
+            type="email"
+            className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="example@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Password */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium">パスワード</label>
+          <input
+            type="password"
+            className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="8文字以上"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* ボタン */}
+        <button
+          type="submit"
+          className="w-full bg-green-600 hover:bg-green-700 transition text-white py-2 rounded-md font-medium"
+        >
+          アカウントを作成
+        </button>
+
+        {/* メッセージ */}
+        {message && (
+          <p className="text-sm text-green-600 bg-green-50 p-2 rounded">
+            {message}
+          </p>
+        )}
+        {error && (
+          <p className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</p>
+        )}
+      </form>
+
+      {/* 導線 */}
+      <p className="text-sm text-center text-gray-600">
+        すでにアカウントがありますか？
+        <Link href="/user/login" className="text-blue-600 ml-1 font-medium">
+          ログイン
+        </Link>
+      </p>
+    </div>
   );
 }
