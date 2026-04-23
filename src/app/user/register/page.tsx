@@ -16,7 +16,7 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const res = await fetch(API_ROUTES.USERS.CREATE, {
+      const res = await fetch(API_ROUTES.USER.CREATE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

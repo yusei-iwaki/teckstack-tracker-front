@@ -16,7 +16,7 @@ export default function RootLayout({
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const res = await fetch(API_ROUTES.USERS.ME, {
+        const res = await fetch(API_ROUTES.USER.ME, {
           credentials: "include",
         });
 
@@ -49,21 +49,12 @@ export default function RootLayout({
 
           <nav className="flex items-center gap-6 text-sm font-medium">
             {isLoggedIn ? (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  ダッシュボード
-                </Link>
-
-                <button
-                  onClick={logout}
-                  className="text-red-500 hover:text-red-600"
-                >
-                  ログアウト
-                </button>
-              </>
+              <button
+                onClick={logout}
+                className="text-red-500 hover:text-red-600 cursor-pointer"
+              >
+                ログアウト
+              </button>
             ) : (
               <>
                 <Link

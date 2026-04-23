@@ -5,8 +5,14 @@ export const API_ROUTES = {
     LOGIN: `${BASE_URL}/auth/login`,
     LOGOUT: `${BASE_URL}/auth/logout`,
   },
-  USERS: {
-    CREATE: `${BASE_URL}/users`,
-    ME: `${BASE_URL}/users/me`,
+  USER: {
+    CREATE: `${BASE_URL}/user`,
+    ME: `${BASE_URL}/user/me`,
+  },
+  NOTE: {
+    CREATE: `${BASE_URL}/note`,
+    LIST: `${BASE_URL}/note`,
+    UPDATE: (id: number) => `${BASE_URL}/note/${id}`,
+    DELETE: (id: number) => `${BASE_URL}/note/${id}`,
   },
 };
