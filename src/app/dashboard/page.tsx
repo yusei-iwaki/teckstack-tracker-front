@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { API_ROUTES } from "@/constants/api-route";
 import NoteForm from "@/components/note-form";
 import NoteList from "@/components/note-list";
+import NoteEditModal from "@/components/note-edit-modal";
 
 export default function Dashboard() {
   const [notes, setNotes] = useState([]);
+  const [editingNote, setEditingNote] = useState<any>(null);
   const router = useRouter();
 
   const fetchNotes = async () => {
@@ -42,8 +44,21 @@ export default function Dashboard() {
       {/* 一覧 */}
       <div className="bg-white shadow rounded-xl p-6">
         <h2 className="font-semibold mb-4">メモ一覧</h2>
-        <NoteList notes={notes} onDeleted={fetchNotes} />
+        <NoteList
+          notes={notes}
+          onDeleted={fetchNotes}
+          onEdit={setEditingNote}
+        />
       </div>
+
+      {/* モーダル */}
+      {editingNote && (
+        <NoteEditModal
+          note={editingNote}
+          onClose={() => setEditingNote(null)}
+          onUpdated={fetchNotes}
+        />
+      )}
     </div>
   );
 }
