@@ -1,14 +1,19 @@
 "use client";
 
 import { API_ROUTES } from "@/constants/api-route";
+import { Note } from "@/types/note";
+import { getTagColor } from "@/utils/tag-color";
+import { useRouter } from "next/navigation";
 
 type Props = {
-  notes: any[];
+  notes: Array<Note>;
   onDeleted: () => void;
   onEdit: (id: any) => void;
 };
 
 export default function NoteList({ notes, onDeleted, onEdit }: Props) {
+  const router = useRouter();
+
   const handleDelete = async (id: number) => {
     await fetch(API_ROUTES.NOTE.DELETE(id), {
       method: "DELETE",
@@ -23,7 +28,7 @@ export default function NoteList({ notes, onDeleted, onEdit }: Props) {
       {notes.length === 0 && (
         <p className="text-gray-400 text-center">まだメモがありません</p>
       )}
-      {notes.map((note: any) => (
+      {notes.map((note) => (
         <div
           key={note.id}
           className="border border-gray-200 rounded-lg p-4 hover:shadow transition"
@@ -57,7 +62,10 @@ export default function NoteList({ notes, onDeleted, onEdit }: Props) {
             {note.tags?.map((tag: string) => (
               <span
                 key={tag}
-                className="bg-gray-200 text-xs px-2 py-1 rounded-full"
+                onClick={() =>
+                  router.push(`/dashboard?tag=${tag}`, { scroll: false })
+                }
+                className={`text-xs px-2 py-1 rounded-full cursor-pointer transition hover:scale-105 hover:opacity-80 ${getTagColor(tag)}`}
               >
                 #{tag}
               </span>

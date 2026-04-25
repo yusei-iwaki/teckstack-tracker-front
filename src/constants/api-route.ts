@@ -15,4 +15,7 @@ export const API_ROUTES = {
     UPDATE: (id: number) => `${BASE_URL}/note/${id}`,
     DELETE: (id: number) => `${BASE_URL}/note/${id}`,
   },
+  TAG: {
+    LIST: `${BASE_URL}/tag`,
+  },
 };

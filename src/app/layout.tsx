@@ -76,7 +76,7 @@ export default function RootLayout({
         </header>
 
         <main className="min-h-screen flex items-center justify-center px-4">
-          <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow">
+          <div className="w-full max-w-7xl bg-white p-8 rounded-2xl shadow">
             {children}
           </div>
         </main>
