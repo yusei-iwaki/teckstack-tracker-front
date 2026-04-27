@@ -1,7 +1,8 @@
 "use client";
 
-import { API_ROUTES } from "@/constants/api-route";
+import { stepLogin } from "@/server/step-process/step-login";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Content() {
@@ -9,23 +10,20 @@ export default function Content() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const router = useRouter();
+
   const handleLogin = async (e: any) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch(API_ROUTES.AUTH.LOGIN, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
-      });
-
-      if (!res.ok) throw new Error("ログイン失敗");
-
-      location.href = "/dashboard";
-    } catch (e: any) {
-      setError(e.message);
+    const result = await stepLogin({ email, password });
+    if (!result) {
+      setError(
+        "ログインに失敗しました。メールアドレスとパスワードを確認してください。",
+      );
+      return;
     }
+
+    router.push("/member/dashboard");
   };
 
   return (

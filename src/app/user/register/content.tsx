@@ -1,35 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { API_ROUTES } from "@/constants/api-route";
+import { stepUserRegister } from "@/server/step-process/step-user-register";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setMessage("");
-    setError("");
-
-    try {
-      const res = await fetch(API_ROUTES.USER.CREATE, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!res.ok) throw new Error("登録に失敗しました");
-
-      setMessage("登録成功！");
-      setEmail("");
-      setPassword("");
-    } catch (e: any) {
-      setError(e.message);
-    }
+    const result = await stepUserRegister({ email, password });
+    if (!result) throw new Error("登録に失敗しました。");
   };
 
   return (
@@ -77,16 +59,6 @@ export default function RegisterPage() {
         >
           アカウントを作成
         </button>
-
-        {/* メッセージ */}
-        {message && (
-          <p className="text-sm text-green-600 bg-green-50 p-2 rounded">
-            {message}
-          </p>
-        )}
-        {error && (
-          <p className="text-sm text-red-600 bg-red-50 p-2 rounded">{error}</p>
-        )}
       </form>
 
       {/* 導線 */}

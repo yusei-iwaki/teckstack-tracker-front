@@ -5,6 +5,7 @@ export const API_ROUTES = {
   AUTH: {
     LOGIN: `${BASE_URL}/auth/login`,
     LOGOUT: `${BASE_URL}/auth/logout`,
+    VERIFY: (token: string) => `${BASE_URL}/auth/verify?token=${token}`,
   },
   USER: {
     CREATE: `${BASE_URL}/user`,
