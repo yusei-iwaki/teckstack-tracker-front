@@ -8,17 +8,21 @@ export default function Content() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = params.get("token");
+    const verify = async () => {
+      const token = params.get("token");
 
-    if (!token) return;
+      if (!token) return;
 
-    const result = stepVerify({ token });
-    if (!result) {
-      router.push("/user/login");
-      return;
-    }
+      const result = await stepVerify({ token });
+      if (!result) {
+        router.push("/user/login");
+        return;
+      }
 
-    router.push("/member/dashboard");
+      router.push("/member/dashboard");
+    };
+
+    verify();
   }, []);
 
   return <div>認証中...</div>;

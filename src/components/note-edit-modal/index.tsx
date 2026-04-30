@@ -1,6 +1,6 @@
 "use client";
 
-import { API_ROUTES } from "@/constants/api-route";
+import { stepNoteUpdate } from "@/server/step-process/note/step-note-update";
 import { useState } from "react";
 
 type Props = {
@@ -12,14 +12,10 @@ type Props = {
 export default function NoteEditModal({ note, onClose, onUpdated }: Props) {
   const [form, setForm] = useState(note);
   const handleSave = async () => {
-    await fetch(API_ROUTES.NOTE.UPDATE(note.id), {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        title: form.title,
-        content: form.content,
-      }),
+    await stepNoteUpdate({
+      id: note.id,
+      title: form.title,
+      content: form.content,
     });
 
     onClose();

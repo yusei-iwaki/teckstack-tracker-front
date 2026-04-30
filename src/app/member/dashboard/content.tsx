@@ -3,48 +3,35 @@
 import NoteEditModal from "@/components/note-edit-modal";
 import NoteForm from "@/components/note-form";
 import NoteList from "@/components/note-list";
+import NotePagination from "@/components/note-pagination";
 import TagSidebar from "@/components/tag-sidebar";
-import { API_ROUTES } from "@/constants/api-route";
+import { PagedNote } from "@/types/note";
+import { Tag } from "@/types/tag";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export default function Content() {
-  const [notes, setNotes] = useState([]);
+type Props = {
+  initialNotes: PagedNote;
+  initialTags: Array<Tag>;
+};
+
+export default function Content({ initialNotes, initialTags }: Props) {
   const [editingNote, setEditingNote] = useState<any>(null);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
+  const { content, totalPages, number } = initialNotes;
+
   const searchParams = useSearchParams();
-  const tag = searchParams.get("tag");
+  const tag = searchParams.get("tag") ?? "";
 
-  const fetchNotes = async () => {
-    try {
-      const url = tag
-        ? `${API_ROUTES.NOTE.LIST}?tag=${tag}`
-        : API_ROUTES.NOTE.LIST;
-
-      const res = await fetch(url, {
-        credentials: "include",
-      });
-
-      if (!res.ok) throw new Error();
-
-      const data = await res.json();
-      setNotes(data);
-    } catch {
-      router.push("/user/login");
-    }
-  };
-
-  useEffect(() => {
-    fetchNotes();
-  }, [tag]);
+  const refreshData = () => router.refresh();
 
   return (
     <div className="max-w-6xl mx-auto px-4 mt-6 flex gap-6">
       {/* 🔥 左：タグサイドバー */}
       <div className="w-64 sticky top-20 h-fit hidden md:block">
-        <TagSidebar />
+        <TagSidebar initialTags={initialTags} />
       </div>
 
       {/* 🔥 右：メイン */}
@@ -61,7 +48,7 @@ export default function Content() {
         {/* 作成 */}
         <div className="bg-white shadow rounded-xl p-6">
           <h2 className="font-semibold mb-4">メモ作成</h2>
-          <NoteForm onCreated={fetchNotes} />
+          <NoteForm onCreated={refreshData} />
         </div>
 
         {/* 一覧 */}
@@ -75,7 +62,7 @@ export default function Content() {
               </div>
 
               <button
-                onClick={() => router.push("/dashboard")}
+                onClick={() => router.push("/member/dashboard")}
                 className="text-xs text-blue-500 hover:underline"
               >
                 クリア
@@ -84,12 +71,20 @@ export default function Content() {
           )}
 
           <NoteList
-            notes={notes}
-            onDeleted={fetchNotes}
+            notes={content}
+            onDeleted={refreshData}
             onEdit={setEditingNote}
           />
         </div>
       </div>
+
+      <NotePagination
+        currentPage={number}
+        totalPages={totalPages}
+        onPageChange={(page) => {
+          router.push(`/member/dashboard?tag=${tag}&page=${page}`);
+        }}
+      />
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex">
@@ -106,7 +101,10 @@ export default function Content() {
               <button onClick={() => setIsOpen(false)}>✕</button>
             </div>
 
-            <TagSidebar onClose={() => setIsOpen(false)} />
+            <TagSidebar
+              initialTags={initialTags}
+              onClose={() => setIsOpen(false)}
+            />
           </div>
         </div>
       )}
@@ -116,7 +114,7 @@ export default function Content() {
         <NoteEditModal
           note={editingNote}
           onClose={() => setEditingNote(null)}
-          onUpdated={fetchNotes}
+          onUpdated={refreshData}
         />
       )}
     </div>

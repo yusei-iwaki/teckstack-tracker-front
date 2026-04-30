@@ -1,41 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Tag } from "@/types/tag";
 import { useRouter, useSearchParams } from "next/navigation";
-import { API_ROUTES } from "@/constants/api-route";
 
 type Props = {
+  initialTags: Array<Tag>;
   onClose?: () => void;
 };
 
-export default function TagSidebar({ onClose }: Props) {
-  const [tags, setTags] = useState<{ name: string; count: number }[]>([]);
+export default function TagSidebar({ initialTags, onClose }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTag = searchParams.get("tag");
-
-  const fetchTags = async () => {
-    const res = await fetch(API_ROUTES.TAG.LIST, {
-      credentials: "include",
-    });
-    const data = await res.json();
-    setTags(data);
-  };
-
-  useEffect(() => {
-    fetchTags();
-  }, []);
 
   return (
     <div className="bg-white p-4 rounded-xl shadow h-fit">
       <h2 className="font-bold mb-3 text-sm text-gray-600">タグ</h2>
 
       <div className="space-y-2">
-        {tags.map((tag) => (
+        {initialTags.map((tag) => (
           <div
             key={tag.name}
             onClick={() => {
-              router.push(`/dashboard?tag=${tag.name}`, { scroll: false });
+              router.push(`/member/dashboard?tag=${tag.name}`, {
+                scroll: false,
+              });
               onClose?.();
             }}
             className={`
@@ -53,7 +42,7 @@ export default function TagSidebar({ onClose }: Props) {
       {currentTag && (
         <button
           onClick={() => {
-            router.push("/dashboard");
+            router.push("/member/dashboard");
             onClose?.();
           }}
           className="mt-4 text-xs text-blue-500 hover:underline"

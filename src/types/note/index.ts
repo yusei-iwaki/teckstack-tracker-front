@@ -5,3 +5,12 @@ export type Note = {
   tags: string[];
   createdAt: string;
 };
+
+export type PagedNote = {
+  content: Array<Note>;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+};

@@ -1,6 +1,6 @@
 "use client";
 
-import { API_ROUTES } from "@/constants/api-route";
+import { stepNoteDelete } from "@/server/step-process/note/step-note-delete";
 import { Note } from "@/types/note";
 import { getTagColor } from "@/utils/tag-color";
 import { useRouter } from "next/navigation";
@@ -15,11 +15,7 @@ export default function NoteList({ notes, onDeleted, onEdit }: Props) {
   const router = useRouter();
 
   const handleDelete = async (id: number) => {
-    await fetch(API_ROUTES.NOTE.DELETE(id), {
-      method: "DELETE",
-      credentials: "include",
-    });
-
+    await stepNoteDelete({ id });
     onDeleted();
   };
 
@@ -63,7 +59,7 @@ export default function NoteList({ notes, onDeleted, onEdit }: Props) {
               <span
                 key={tag}
                 onClick={() =>
-                  router.push(`/dashboard?tag=${tag}`, { scroll: false })
+                  router.push(`/member/dashboard?tag=${tag}`, { scroll: false })
                 }
                 className={`text-xs px-2 py-1 rounded-full cursor-pointer transition hover:scale-105 hover:opacity-80 ${getTagColor(tag)}`}
               >

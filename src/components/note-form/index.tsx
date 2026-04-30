@@ -1,6 +1,6 @@
 "use client";
 
-import { API_ROUTES } from "@/constants/api-route";
+import { stepNoteCreate } from "@/server/step-process/note/step-note-create";
 import { useState } from "react";
 
 type Props = {
@@ -15,18 +15,10 @@ export default function NoteForm({ onCreated }: Props) {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    await fetch(API_ROUTES.NOTE.CREATE, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // ← Cookie認証なら必須
-      body: JSON.stringify({
-        title,
-        content,
-        tags: tags
-          .split(",")
-          .map((t) => t.trim())
-          .filter((t) => t !== ""),
-      }),
+    await stepNoteCreate({
+      title,
+      content,
+      tags,
     });
 
     setTitle("");
