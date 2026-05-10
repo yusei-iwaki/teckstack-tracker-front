@@ -8,11 +8,14 @@ export const userRegister = async ({
   email,
   password,
 }: UserRegisterRequest) => {
+  console.log("before fetch");
   const res = await fetch(API_ROUTES.USER.CREATE, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
+
+  console.log("after fetch", res);
 
   if (!res.ok) false;
 
